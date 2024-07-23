@@ -37,9 +37,8 @@ services:
     restart: always
     ports:
       - "3000:3000"
-      - "2222:22"
     volumes:
-      - ./repos:/var/www/git
+      - ./repos:/home/git
 
 volumes:
   gitserver_data:
