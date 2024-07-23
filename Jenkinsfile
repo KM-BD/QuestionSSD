@@ -4,10 +4,20 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'http://localhost:3000/repository.git'
+                git branch: 'master', url: 'https://github.com/KM-BD/QuestionSSD.git'
             }
         }
-
+         
+        stage('Code Quality Check via SonarQube') { 
+           steps { 
+               script { 
+                def scannerHome = tool 'SonarQube'; 
+                   withSonarQubeEnv('SonarQube') { 
+                   sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=SSD2116 -Dsonar.sources=." 
+                   } 
+               } 
+           } 
+        } 
         stage('Install Dependencies') {
             steps {
                 sh 'pip install -r webapp/requirements.txt'
@@ -33,12 +43,6 @@ pipeline {
                 always {
                     dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
                 }
-            }
-        }
-
-        stage('Deploy Application') {
-            steps {
-                sh 'docker-compose up -d'
             }
         }
 
